@@ -241,9 +241,9 @@ async def show_faq(callback: CallbackQuery):
 async def show_contact(callback: CallbackQuery):
     lang = user_languages.get(callback.from_user.id, "uz")
     text = (
-        "📞 Admin bilan bog'lanish: @Bahadir0404"
+        "📞 Admin bilan bog'lanish: @Bahadir0404 "
         if lang == "uz"
-        else "📞 Admin menen baylanıs: @Bahadir0404"
+        else "📞 Admin menen baylanıs: @Bahadir0404 "
     )
     await callback.message.edit_text(
         text,
