@@ -38,10 +38,10 @@ TEXTS = {
         "menu": "Kerakli bo'limni tanlang:",
         "services": (
             "💻 **Veb-ilova va xizmatlar narxi:**\n\n1. **Landing Page"
-            " (Bir sahifali sayt):** $100 dan boshlab (3-5 kun)\n2. **Internet"
-            " do'kon (E-commerce):** $300 dan boshlab (7-14 kun)\n3. **Korporativ"
-            " veb-sayt:** $250 dan boshlab (5-10 kun)\n4. **Telegram bot"
-            " yaratish:** $50 dan boshlab\n\n*Narxlar loyihaning murakkabligiga"
+            " (Bir sahifali sayt):** $10 dan boshlab (3-5 kun)\n2. **Internet"
+            " do'kon (E-commerce):** $30 dan boshlab (7-14 kun)\n3. **Korporativ"
+            " veb-sayt:** $25 dan boshlab (5-10 kun)\n4. **Telegram bot"
+            " yaratish:** $5 dan boshlab\n\n*Narxlar loyihaning murakkabligiga"
             " qarab o'zgarishi mumkin.*"
         ),
         "faq": (
