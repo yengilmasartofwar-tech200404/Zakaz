@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import logging
 import sys
 from aiogram import Bot, Dispatcher, F, Router
@@ -13,29 +14,25 @@ from aiogram.types import (
     Message,
 )
 
-# TOKEN va ADMIN ID ni shu yerga yozasiz
+# YANYI TOKEN VA ADMIN ID
 TOKEN = "9065086543:AAFQw02y-SjKGgEv5Sm0tspIWf341FKZc2E"
-ADMIN_ID = (
-    1800618546  # Telegramdagi o'z raqamli IDingizni yozing (masalan: 987654321)
-)
+ADMIN_ID = 1800618546
 
 dp = Dispatcher()
 router = Router()
 
 
-# --- STATES (Holatlar) ---
 class OrderState(StatesGroup):
     waiting_for_name = State()
     waiting_for_phone = State()
     waiting_for_details = State()
 
 
-# --- MATNLAR VA TARJIMALAR (O'zbekcha / Qoraqalpoqcha) ---
 TEXTS = {
     "uz": {
         "welcome": (
             "Assalomu alaykum! Veb-ilova va botlar buyurtma berish botiga"
-            " xush kelibsiz.\nTilni tanlang / Tilg'i saylang:"
+            " xush kelibsiz.\nTilni tanlang / Tilg'i saylan':"
         ),
         "choose_lang": "Til muvaffaqiyatli o'zgartirildi: O'zbek tili 🇺🇿",
         "menu": (
@@ -69,8 +66,8 @@ TEXTS = {
         ),
         "admin_notify": (
             "🔔 **Yangi buyurtma!**\n\n👤 **Mijoz:** {name}\n📞 **Telefon:**"
-            " {phone}\n💬 **Loyiha haqida:** {details}\n🔗 **Profil:**"
-            " [{username}](tg://user?id={user_id})\n🕒 **Vaqt:** {time}"
+            " {phone}\n💬 **Loyiha haqida:** {details}\n🔗 **Username:**"
+            " {username}\n🆔 **ID:** `{user_id}`\n🕒 **Vaqt:** {time}"
         ),
         "btn_services": "🌐 Veb-ilovalar va Narxlar",
         "btn_faq": "❓ Savol-Javoblar",
@@ -83,7 +80,7 @@ TEXTS = {
             "Assalawma aleykum! Web-qollanba hám botlar zakaz beriw botına"
             " xosh kelipsiz.\nTildi saylan' / Tilni tanlang:"
         ),
-        "choose_lang": "Til tabıslı ózgertildi: Qaraqalpaq tili 🇰🇷 (Qaraqalpoq)",
+        "choose_lang": "Til tabıslı ózgertildi: Qaraqalpaq tili 🇺🇿",
         "menu": (
             "Kerakli bol'imdi saylan':\n\n🌐 **Web-qollanba turlari hám"
             " bahaları**\n❓ **Kóp beriletin sorawlar**\n🛒 **Zakaz"
@@ -118,8 +115,8 @@ TEXTS = {
         ),
         "admin_notify": (
             "🔔 **Taza zakaz!**\n\n👤 **Mijoz:** {name}\n📞 **Telefon:**"
-            " {phone}\n💬 **Proekt haqqında:** {details}\n🔗 **Profil:**"
-            " [{username}](tg://user?id={user_id})\n🕒 **Waqıt:** {time}"
+            " {phone}\n💬 **Proekt haqqında:** {details}\n🔗 **Username:**"
+            " {username}\n🆔 **ID:** `{user_id}`\n🕒 **Waqıt:** {time}"
         ),
         "btn_services": "🌐 Web-qollanbalar hám Bahalar",
         "btn_faq": "❓ Soraw-Juwaplar",
@@ -129,7 +126,6 @@ TEXTS = {
     },
 }
 
-# Foydalanuvchilar tilini saqlash uchun oddiy dictionary
 user_languages = {}
 
 
@@ -154,14 +150,13 @@ def get_kb(lang="uz"):
                     text="🇺🇿 O'zbekcha", callback_data="set_uz"
                 ),
                 InlineKeyboardButton(
-                    text="🇰🇷 Qaraqalpaqsha", callback_data="set_kaa"
+                    text="🇺🇿 Qaraqalpaqsha", callback_data="set_kaa"
                 ),
             ],
         ]
     )
 
 
-# --- START ---
 @router.message(CommandStart())
 async def cmd_start(message: Message):
     user_id = message.from_user.id
@@ -173,7 +168,7 @@ async def cmd_start(message: Message):
                     text="🇺🇿 O'zbekcha", callback_data="set_uz"
                 ),
                 InlineKeyboardButton(
-                    text="🇰🇷 Qaraqalpaqsha", callback_data="set_kaa"
+                    text="🇺🇿 Qaraqalpaqsha", callback_data="set_kaa"
                 ),
             ]
         ]
@@ -192,7 +187,6 @@ async def set_language(callback: CallbackQuery):
     await callback.answer()
 
 
-# --- MENYU TUGMALARI ---
 @router.callback_query(F.data == "services")
 async def show_services(callback: CallbackQuery):
     lang = user_languages.get(callback.from_user.id, "uz")
@@ -257,7 +251,6 @@ async def back_home(callback: CallbackQuery):
     await callback.message.edit_text(TEXTS[lang]["menu"], reply_markup=get_kb(lang))
 
 
-# --- BUYURTMA BERISH JARAYONI (FSM) ---
 @router.callback_query(F.data == "order")
 async def start_order(callback: CallbackQuery, state: FSMContext):
     lang = user_languages.get(callback.from_user.id, "uz")
@@ -297,15 +290,10 @@ async def process_details(message: Message, state: FSMContext, bot: Bot):
         else "Username yo'q"
     )
 
-    # Vaqt va soatni aniqlash
-    import datetime
-
     current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    # Mijozga tasdiqlash xabari
     await message.answer(TEXTS[lang]["order_success"], reply_markup=get_kb(lang))
 
-    # Adminga xabar yuborish (vaqti, lickasi va yozishmalari bilan)
     admin_text = TEXTS[lang]["admin_notify"].format(
         name=name,
         phone=phone,
@@ -325,7 +313,6 @@ async def process_details(message: Message, state: FSMContext, bot: Bot):
     await state.clear()
 
 
-# --- BOTNI ISHGA TUSHIRISH ---
 async def main():
     bot = Bot(token=TOKEN)
     dp.include_router(router)
