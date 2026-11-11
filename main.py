@@ -240,23 +240,29 @@ async def show_faq(callback: CallbackQuery):
 @router.callback_query(F.data == "contact")
 async def show_contact(callback: CallbackQuery):
     lang = user_languages.get(callback.from_user.id, "uz")
-    text = (
-        "📞 Admin bilan bog'lanish: @Bahadir0404 "
-        if lang == "uz"
-        else "📞 Admin menen baylanıs: @Bahadir0404 "
+    if lang == "uz":
+        text = "📞 Admin bilan bog'lanish uchun pastdagi tugmani bosing:"
+    else:
+        text = "📞 Admin menen baylanıs ushin tómendegi túymani basın':"
+
+    # Tugma orqali to'g'ridan-to'g'ri sizning profilingiz ochiladi
+    contact_keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="💬 Admonga yozish", url="https://t.me/Bahadir0404"
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text=TEXTS[lang]["btn_back"], callback_data="back_home"
+                )
+            ],
+        ]
     )
-    await callback.message.edit_text(
-        text,
-        reply_markup=InlineKeyboardMarkup(
-            inline_keyboard=[
-                [
-                    InlineKeyboardButton(
-                        text=TEXTS[lang]["btn_back"], callback_data="back_home"
-                    )
-                ]
-            ]
-        ),
-    )
+
+    await callback.message.edit_text(text, reply_markup=contact_keyboard)
+
 
 
 @router.callback_query(F.data == "back_home")
