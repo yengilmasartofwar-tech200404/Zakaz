@@ -14,25 +14,27 @@ from aiogram.types import (
     Message,
 )
 
-# YANYI TOKEN VA ADMIN ID
+# === ASOSIY SOZLAMALAR ===
 TOKEN = "9065086543:AAFQw02y-SjKGgEv5Sm0tspIWf341FKZc2E"
-ADMIN_ID = 1800618546
+ADMIN_ID = 1800618546  # Sizning Telegram raqamli IDingiz
 
 dp = Dispatcher()
 router = Router()
 
 
+# === FSM HOLATLARI (Buyurtma jarayoni) ===
 class OrderState(StatesGroup):
     waiting_for_name = State()
     waiting_for_phone = State()
     waiting_for_details = State()
 
 
+# === LOKALIZATSIYA (O'zbek / Qoraqalpoq) ===
 TEXTS = {
     "uz": {
         "welcome": (
             "Assalomu alaykum! Veb-ilova va botlar buyurtma berish botiga"
-            " xush kelibsiz.\nTilni tanlang / Tilg'i saylan':"
+            " xush kelibsiz.\n\nTilni tanlang / Tilg'i saylan':"
         ),
         "choose_lang": "Til muvaffaqiyatli o'zgartirildi: O'zbek tili 🇺🇿",
         "menu": (
@@ -42,32 +44,37 @@ TEXTS = {
         ),
         "services": (
             "💻 **Veb-ilova va xizmatlar narxi:**\n\n1. **Landing Page"
-            " (Bir sahifali sayt):** $100 dan boshlab (3-5 kun)\n2. **Internet"
-            " do'kon (E-commerce):** $300 dan boshlab (7-14 kun)\n3. **Korporativ"
-            " veb-sayt:** $250 dan boshlab (5-10 kun)\n4. **Telegram bot"
-            " yaratish:** $50 dan boshlab\n\nNarxlar loyihaning murakkabligiga"
-            " qarab o'zgarishi mumkin."
+            " (Bir sahifali sayt):** $10 dan boshlab (3-5 kun)\n2. **Internet"
+            " do'kon (E-commerce):** $30 dan boshlab (7-14 kun)\n3. **Korporativ"
+            " veb-sayt:** $25 dan boshlab (5-10 kun)\n4. **Telegram bot"
+            " yaratish:** $5 dan boshlab\n\n*Narxlar loyihaning murakkabligiga"
+            " qarab o'zgarishi mumkin.*"
         ),
         "faq": (
             "❓ **Ko'p beriladigan savollar:**\n\n🔹 **To'lov qanday amalga"
-            " oshiriladi?**\n- 50% oldindan, 50% loyiha topshirilganda.\n🔹"
-            " **Domen va Hosting o'zimizdanmi?**\n- Ha, sozlab beramiz.\n🔹"
-            " **Saytga kafolat bormi?**\n- Ha, 1 yil davomida texnik yordam"
-            " bepul."
+            " oshiriladi?**\n- 50% oldindan, 50% loyiha topshirilganda.\n\n🔹"
+            " **Domen va Hosting sozlab beriladimi?**\n- Ha, to'liq sozlab"
+            " beramiz.\n\n🔹 **Saytga kafolat bormi?**\n- Ha, texnik yordam"
+            " ko'rsatiladi."
         ),
         "ask_name": "Ismingizni kiriting:",
         "ask_phone": (
             "Telefon raqamingizni yuboring (masalan: +998 90 123 45 67):"
         ),
-        "ask_details": "Qanaqa veb-ilova yoki loyiha kerakligini yozib qoldiring:",
+        "ask_details": (
+            "Qanaqa veb-ilova yoki bot kerakligini batafsil yozib qoldiring:"
+        ),
         "order_success": (
-            "✅ Buyurtmangiz qabul qilindi! Tez orada adminlarimiz siz bilan"
-            " bog'lanishadi."
+            "✅ Buyurtmangiz qabul qilindi! Tez orada siz bilan bog'lanamiz."
         ),
         "admin_notify": (
-            "🔔 **Yangi buyurtma!**\n\n👤 **Mijoz:** {name}\n📞 **Telefon:**"
-            " {phone}\n💬 **Loyiha haqida:** {details}\n🔗 **Username:**"
-            " {username}\n🆔 **ID:** `{user_id}`\n🕒 **Vaqt:** {time}"
+            "🔔 **Yangi buyurtma keldi!**\n\n"
+            "👤 **Mijoz:** {name}\n"
+            "📞 **Telefon:** {phone}\n"
+            "💬 **Loyiha haqida:** {details}\n"
+            "🔗 **Username:** {username_text}\n"
+            "🆔 **User ID:** `{user_id}`\n"
+            "🕒 **Vaqt:** {time}"
         ),
         "btn_services": "🌐 Veb-ilovalar va Narxlar",
         "btn_faq": "❓ Savol-Javoblar",
@@ -78,7 +85,7 @@ TEXTS = {
     "kaa": {
         "welcome": (
             "Assalawma aleykum! Web-qollanba hám botlar zakaz beriw botına"
-            " xosh kelipsiz.\nTildi saylan' / Tilni tanlang:"
+            " xosh kelipsiz.\n\nTildi saylan' / Tilni tanlang:"
         ),
         "choose_lang": "Til tabıslı ózgertildi: Qaraqalpaq tili 🇺🇿",
         "menu": (
@@ -91,32 +98,35 @@ TEXTS = {
             " (Bir betlik sayt):** $100 baslap (3-5 kún)\n2. **Internet"
             " magazin (E-commerce):** $300 baslap (7-14 kún)\n3. **Korporativ"
             " web-sayt:** $250 baslap (5-10 kún)\n4. **Telegram bot jaratıw:**"
-            " $50 baslap\n\nBahalar proektin' murakkabligine qarap ózgeriwi"
-            " múmkin."
+            " $50 baslap\n\n*Bahalar proektin' murakkabligine qarap ózgeriwi"
+            " múmkin.*"
         ),
         "faq": (
             "❓ **Kóp beriletin sorawlar:**\n\n🔹 **Tólemler qalay ámelge"
-            " asırıladı?**\n- 50% aldın ala, 50% proekt tapsırılǵanda.\n🔹"
-            " **Domen hám Hosting ózimizden be?**\n- Awa, sazlap beremiz.\n🔹"
-            " **Saytqa kepillik bar ma?**\n- Awa, 1 jıl dawamında texnikalıq"
-            " járdem biypul."
+            " asırıladı?**\n- 50% aldın ala, 50% proekt tapsırılǵanda.\n\n🔹"
+            " **Domen hám Hosting sazlap berile me?**\n- Awa, to'liq sazlap"
+            " beremiz.\n\n🔹 **Saytqa kepillik bar ma?**\n- Awa, texnikalıq"
+            " járdem kórsetiledi."
         ),
         "ask_name": "Atıńızdı kiritin':",
         "ask_phone": (
             "Telefon nomerińizdi jiberin' (mısalı: +998 90 123 45 67):"
         ),
         "ask_details": (
-            "Qanday web-qollanba yamasa proekt kerek ekenligin jazıp"
+            "Qanday web-qollanba yamasa bot kerek ekenligin to'lıq jazıp"
             " qaldırın':"
         ),
         "order_success": (
-            "✅ Zakazınız qabıllandı! Tez arada adminlerimiz siz benen"
-            " baylanısadı."
+            "✅ Zakazınız qabıllandı! Tez arada siz benen baylanısamız."
         ),
         "admin_notify": (
-            "🔔 **Taza zakaz!**\n\n👤 **Mijoz:** {name}\n📞 **Telefon:**"
-            " {phone}\n💬 **Proekt haqqında:** {details}\n🔗 **Username:**"
-            " {username}\n🆔 **ID:** `{user_id}`\n🕒 **Waqıt:** {time}"
+            "🔔 **Taza zakaz keldi!**\n\n"
+            "👤 **Mijoz:** {name}\n"
+            "📞 **Telefon:** {phone}\n"
+            "💬 **Proekt haqqında:** {details}\n"
+            "🔗 **Username:** {username_text}\n"
+            "🆔 **User ID:** `{user_id}`\n"
+            "🕒 **Waqıt:** {time}"
         ),
         "btn_services": "🌐 Web-qollanbalar hám Bahalar",
         "btn_faq": "❓ Soraw-Juwaplar",
@@ -126,6 +136,7 @@ TEXTS = {
     },
 }
 
+# Foydalanuvchi tilini vaqtincha xotirada saqlash
 user_languages = {}
 
 
@@ -155,6 +166,9 @@ def get_kb(lang="uz"):
             ],
         ]
     )
+
+
+# === HANDLERLAR ===
 
 
 @router.message(CommandStart())
@@ -251,6 +265,9 @@ async def back_home(callback: CallbackQuery):
     await callback.message.edit_text(TEXTS[lang]["menu"], reply_markup=get_kb(lang))
 
 
+# === BUYURTMA OLISH JARAYONI ===
+
+
 @router.callback_query(F.data == "order")
 async def start_order(callback: CallbackQuery, state: FSMContext):
     lang = user_languages.get(callback.from_user.id, "uz")
@@ -284,21 +301,24 @@ async def process_details(message: Message, state: FSMContext, bot: Bot):
     phone = data.get("phone")
     details = message.text
     user_id = message.from_user.id
-    username = (
-        f"@{message.from_user.username}"
-        if message.from_user.username
-        else "Username yo'q"
-    )
+
+    # Username tekshirish (boshqa birrovga adashib ketmasligi uchun)
+    if message.from_user.username:
+        username_text = f"@{message.from_user.username}"
+    else:
+        username_text = "Mavjud emas (Usernamelar o'rnatilmagan)"
 
     current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+    # Mijozga tasdiqlash
     await message.answer(TEXTS[lang]["order_success"], reply_markup=get_kb(lang))
 
+    # Adminga zakazni vaqt, ism, nomer va to'g'ri ID si bilan yuborish
     admin_text = TEXTS[lang]["admin_notify"].format(
         name=name,
         phone=phone,
         details=details,
-        username=username,
+        username_text=username_text,
         user_id=user_id,
         time=current_time,
     )
@@ -308,16 +328,19 @@ async def process_details(message: Message, state: FSMContext, bot: Bot):
             chat_id=ADMIN_ID, text=admin_text, parse_mode=ParseMode.MARKDOWN
         )
     except Exception as e:
-        logging.error(f"Adminga yuborishda xatolik: {e}")
+        logging.error(f"Adminga xabar yuborishda xatolik: {e}")
 
     await state.clear()
+
+
+# === MAIN RUN ===
 
 
 async def main():
     bot = Bot(token=TOKEN)
     dp.include_router(router)
     await bot.delete_webhook(drop_pending_updates=True)
-    print("Bot ishga tushdi...")
+    print("Bot muvaffaqiyatli ishga tushdi...")
     await dp.start_polling(bot)
 
 
