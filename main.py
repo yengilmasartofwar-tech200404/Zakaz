@@ -14,53 +14,44 @@ from aiogram.types import (
     Message,
 )
 
-# === ASOSIY SOZLAMALAR ===
+# === SOZLAMALAR ===
 TOKEN = "9065086543:AAFQw02y-SjKGgEv5Sm0tspIWf341FKZc2E"
-ADMIN_ID = 1800618546  # Sizning Telegram raqamli IDingiz
+ADMIN_ID = 1800618546
 
 dp = Dispatcher()
 router = Router()
 
 
-# === FSM HOLATLARI (Buyurtma jarayoni) ===
 class OrderState(StatesGroup):
     waiting_for_name = State()
     waiting_for_phone = State()
     waiting_for_details = State()
 
 
-# === LOKALIZATSIYA (O'zbek / Qoraqalpoq) ===
 TEXTS = {
     "uz": {
         "welcome": (
             "Assalomu alaykum! Veb-ilova va botlar buyurtma berish botiga"
-            " xush kelibsiz.\n\nTilni tanlang / Tilg'i saylan':"
+            " xush kelibsiz.\n\nTilni tanlang:"
         ),
         "choose_lang": "Til muvaffaqiyatli o'zgartirildi: O'zbek tili 🇺🇿",
-        "menu": (
-            "Kerakli bo'limni tanlang:\n\n🌐 **Veb-ilova turlari va narxlari**\n❓"
-            " **Ko'p beriladigan savollar**\n🛒 **Buyurtma berish**\n📞"
-            " **Bog'lanish**"
-        ),
+        "menu": "Kerakli bo'limni tanlang:",
         "services": (
             "💻 **Veb-ilova va xizmatlar narxi:**\n\n1. **Landing Page"
-            " (Bir sahifali sayt):** $10 dan boshlab (3-5 kun)\n2. **Internet"
-            " do'kon (E-commerce):** $30 dan boshlab (7-14 kun)\n3. **Korporativ"
-            " veb-sayt:** $25 dan boshlab (5-10 kun)\n4. **Telegram bot"
-            " yaratish:** $5 dan boshlab\n\n*Narxlar loyihaning murakkabligiga"
+            " (Bir sahifali sayt):** $100 dan boshlab (3-5 kun)\n2. **Internet"
+            " do'kon (E-commerce):** $300 dan boshlab (7-14 kun)\n3. **Korporativ"
+            " veb-sayt:** $250 dan boshlab (5-10 kun)\n4. **Telegram bot"
+            " yaratish:** $50 dan boshlab\n\n*Narxlar loyihaning murakkabligiga"
             " qarab o'zgarishi mumkin.*"
         ),
         "faq": (
             "❓ **Ko'p beriladigan savollar:**\n\n🔹 **To'lov qanday amalga"
             " oshiriladi?**\n- 50% oldindan, 50% loyiha topshirilganda.\n\n🔹"
             " **Domen va Hosting sozlab beriladimi?**\n- Ha, to'liq sozlab"
-            " beramiz.\n\n🔹 **Saytga kafolat bormi?**\n- Ha, texnik yordam"
-            " ko'rsatiladi."
+            " beramiz."
         ),
         "ask_name": "Ismingizni kiriting:",
-        "ask_phone": (
-            "Telefon raqamingizni yuboring (masalan: +998 90 123 45 67):"
-        ),
+        "ask_phone": "Telefon raqamingizni yuboring (masalan: +998 90 123 45 67):",
         "ask_details": (
             "Qanaqa veb-ilova yoki bot kerakligini batafsil yozib qoldiring:"
         ),
@@ -76,23 +67,19 @@ TEXTS = {
             "🆔 **User ID:** `{user_id}`\n"
             "🕒 **Vaqt:** {time}"
         ),
-        "btn_services": "🌐 Veb-ilovalar va Narxlar",
-        "btn_faq": "❓ Savol-Javoblar",
-        "btn_order": "🛒 Buyurtma berish",
-        "btn_contact": "📞 Bog'lanish",
-        "btn_back": "🔙 Orqaga",
+        "btn_services": "Veb-ilovalar va Narxlar",
+        "btn_faq": "Savol-Javoblar",
+        "btn_order": "Buyurtma berish",
+        "btn_contact": "Bog'lanish",
+        "btn_back": "Orqaga",
     },
     "kaa": {
         "welcome": (
             "Assalawma aleykum! Web-qollanba hám botlar zakaz beriw botına"
-            " xosh kelipsiz.\n\nTildi saylan' / Tilni tanlang:"
+            " xosh kelipsiz.\n\nTildi saylan':"
         ),
         "choose_lang": "Til tabıslı ózgertildi: Qaraqalpaq tili 🇺🇿",
-        "menu": (
-            "Kerakli bol'imdi saylan':\n\n🌐 **Web-qollanba turlari hám"
-            " bahaları**\n❓ **Kóp beriletin sorawlar**\n🛒 **Zakaz"
-            " beriw**\n📞 **Baylanıs**"
-        ),
+        "menu": "Kerakli bol'imdi saylan':",
         "services": (
             "💻 **Web-qollanba hám xızmetler bahası:**\n\n1. **Landing Page"
             " (Bir betlik sayt):** $100 baslap (3-5 kún)\n2. **Internet"
@@ -105,13 +92,10 @@ TEXTS = {
             "❓ **Kóp beriletin sorawlar:**\n\n🔹 **Tólemler qalay ámelge"
             " asırıladı?**\n- 50% aldın ala, 50% proekt tapsırılǵanda.\n\n🔹"
             " **Domen hám Hosting sazlap berile me?**\n- Awa, to'liq sazlap"
-            " beremiz.\n\n🔹 **Saytqa kepillik bar ma?**\n- Awa, texnikalıq"
-            " járdem kórsetiledi."
+            " beremiz."
         ),
         "ask_name": "Atıńızdı kiritin':",
-        "ask_phone": (
-            "Telefon nomerińizdi jiberin' (mısalı: +998 90 123 45 67):"
-        ),
+        "ask_phone": "Telefon nomerińizdi jiberin' (mısalı: +998 90 123 45 67):",
         "ask_details": (
             "Qanday web-qollanba yamasa bot kerek ekenligin to'lıq jazıp"
             " qaldırın':"
@@ -128,15 +112,14 @@ TEXTS = {
             "🆔 **User ID:** `{user_id}`\n"
             "🕒 **Waqıt:** {time}"
         ),
-        "btn_services": "🌐 Web-qollanbalar hám Bahalar",
-        "btn_faq": "❓ Soraw-Juwaplar",
-        "btn_order": "🛒 Zakaz beriw",
-        "btn_contact": "📞 Baylanıs",
-        "btn_back": "🔙 Artqa",
+        "btn_services": "Web-qollanbalar hám Bahalar",
+        "btn_faq": "Soraw-Juwaplar",
+        "btn_order": "Zakaz beriw",
+        "btn_contact": "Baylanıs",
+        "btn_back": "Artqa",
     },
 }
 
-# Foydalanuvchi tilini vaqtincha xotirada saqlash
 user_languages = {}
 
 
@@ -146,14 +129,22 @@ def get_kb(lang="uz"):
         inline_keyboard=[
             [
                 InlineKeyboardButton(
-                    text=t["btn_services"], callback_data="services"
+                    text=f"🌐 {t['btn_services']}", callback_data="services"
                 )
             ],
-            [InlineKeyboardButton(text=t["btn_faq"], callback_data="faq")],
-            [InlineKeyboardButton(text=t["btn_order"], callback_data="order")],
             [
                 InlineKeyboardButton(
-                    text=t["btn_contact"], callback_data="contact"
+                    text=f"❓ {t['btn_faq']}", callback_data="faq"
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text=f"🛒 {t['btn_order']}", callback_data="order"
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text=f"📞 {t['btn_contact']}", callback_data="contact"
                 )
             ],
             [
@@ -166,9 +157,6 @@ def get_kb(lang="uz"):
             ],
         ]
     )
-
-
-# === HANDLERLAR ===
 
 
 @router.message(CommandStart())
@@ -210,7 +198,8 @@ async def show_services(callback: CallbackQuery):
             inline_keyboard=[
                 [
                     InlineKeyboardButton(
-                        text=TEXTS[lang]["btn_back"], callback_data="back_home"
+                        text=f"🔙 {TEXTS[lang]['btn_back']}",
+                        callback_data="back_home",
                     )
                 ]
             ]
@@ -228,7 +217,8 @@ async def show_faq(callback: CallbackQuery):
             inline_keyboard=[
                 [
                     InlineKeyboardButton(
-                        text=TEXTS[lang]["btn_back"], callback_data="back_home"
+                        text=f"🔙 {TEXTS[lang]['btn_back']}",
+                        callback_data="back_home",
                     )
                 ]
             ]
@@ -245,7 +235,6 @@ async def show_contact(callback: CallbackQuery):
     else:
         text = "📞 Admin menen baylanıs ushin tómendegi túymani basın':"
 
-    # Tugma orqali to'g'ridan-to'g'ri sizning profilingiz ochiladi
     contact_keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
             [
@@ -255,23 +244,21 @@ async def show_contact(callback: CallbackQuery):
             ],
             [
                 InlineKeyboardButton(
-                    text=TEXTS[lang]["btn_back"], callback_data="back_home"
+                    text=f"🔙 {TEXTS[lang]['btn_back']}",
+                    callback_data="back_home",
                 )
             ],
         ]
     )
-
     await callback.message.edit_text(text, reply_markup=contact_keyboard)
-
 
 
 @router.callback_query(F.data == "back_home")
 async def back_home(callback: CallbackQuery):
     lang = user_languages.get(callback.from_user.id, "uz")
-    await callback.message.edit_text(TEXTS[lang]["menu"], reply_markup=get_kb(lang))
-
-
-# === BUYURTMA OLISH JARAYONI ===
+    await callback.message.edit_text(
+        TEXTS[lang]["menu"], reply_markup=get_kb(lang)
+    )
 
 
 @router.callback_query(F.data == "order")
@@ -308,18 +295,15 @@ async def process_details(message: Message, state: FSMContext, bot: Bot):
     details = message.text
     user_id = message.from_user.id
 
-    # Username tekshirish (boshqa birrovga adashib ketmasligi uchun)
     if message.from_user.username:
         username_text = f"@{message.from_user.username}"
     else:
-        username_text = "Mavjud emas (Usernamelar o'rnatilmagan)"
+        username_text = "Mavjud emas"
 
     current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    # Mijozga tasdiqlash
     await message.answer(TEXTS[lang]["order_success"], reply_markup=get_kb(lang))
 
-    # Adminga zakazni vaqt, ism, nomer va to'g'ri ID si bilan yuborish
     admin_text = TEXTS[lang]["admin_notify"].format(
         name=name,
         phone=phone,
@@ -334,19 +318,16 @@ async def process_details(message: Message, state: FSMContext, bot: Bot):
             chat_id=ADMIN_ID, text=admin_text, parse_mode=ParseMode.MARKDOWN
         )
     except Exception as e:
-        logging.error(f"Adminga xabar yuborishda xatolik: {e}")
+        logging.error(f"Adminga yuborishda xatolik: {e}")
 
     await state.clear()
-
-
-# === MAIN RUN ===
 
 
 async def main():
     bot = Bot(token=TOKEN)
     dp.include_router(router)
     await bot.delete_webhook(drop_pending_updates=True)
-    print("Bot muvaffaqiyatli ishga tushdi...")
+    print("Bot ishga tushdi...")
     await dp.start_polling(bot)
 
 
