@@ -16,7 +16,7 @@ from aiogram.types import (
 # TOKEN va ADMIN ID ni shu yerga yozasiz
 TOKEN = "9065086543:AAFQw02y-SjKGgEv5Sm0tspIWf341FKZc2E"
 ADMIN_ID = (
-    6677396153  # Telegramdagi o'z raqamli IDingizni yozing (masalan: 987654321)
+    1800618546  # Telegramdagi o'z raqamli IDingizni yozing (masalan: 987654321)
 )
 
 dp = Dispatcher()
